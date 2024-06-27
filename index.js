@@ -1,4 +1,5 @@
 //slider
+
 document.addEventListener('DOMContentLoaded', function () {
   const slider = document.querySelector('.members__list');
   const slides = document.querySelectorAll('.member');
@@ -99,6 +100,66 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+  const stagesList = document.querySelector('.stages__list');
+  const stagesItems = document.querySelectorAll('.stages__list__item');
+  const prevButton = document.querySelector('.stage-prev');
+  const nextButton = document.querySelector('.stage-next');
+  const dots = document.querySelectorAll('.slider__dot');
+
+  const slidesConfig = [[0, 1], [2], [3, 4], [5], [6]];
+  let currentIndex = 0;
+
+  function updateButtons() {
+    prevButton.disabled = currentIndex === 0;
+    nextButton.disabled = currentIndex === slidesConfig.length - 1;
+  }
+
+  function updateDots() {
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentIndex);
+    });
+  }
+
+  function updateSlider() {
+    const slideItems = slidesConfig[currentIndex];
+    const firstItem = stagesItems[slideItems[0]];
+    stagesList.scrollTo({
+      left: firstItem.offsetLeft - 20,
+      behavior: 'smooth'
+    });
+    updateButtons();
+    updateDots();
+  }
+
+  function slideNext() {
+    if (currentIndex < slidesConfig.length - 1) {
+      currentIndex++;
+      updateSlider();
+    }
+  }
+
+  function slidePrev() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateSlider();
+    }
+  }
+
+  prevButton.addEventListener('click', slidePrev);
+  nextButton.addEventListener('click', slideNext);
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener('click', () => {
+      currentIndex = index;
+      updateSlider();
+    });
+  });
+
+  updateButtons();
+  updateDots();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
   const header = document.querySelector('.header');
   const support = document.getElementById('support');
   const logo = document.getElementById('logo');
@@ -107,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
     isCrossed = false;
     header.classList.toggle('colored', isCrossed);
   });
-  const callback = (entries, observer) => {
+  const callback = (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         isCrossed = !isCrossed;
